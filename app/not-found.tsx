@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function NotFound(){return <section className="container closing-note" style={{minHeight:'65vh',justifyContent:'center'}}><span className="eyebrow">404 / A SMALL DETOUR</span><h1 style={{margin:'24px 0'}}>Let’s find your way.</h1><p>This page isn’t here, but there’s plenty to explore.</p><Link href="/" className="button primary">Back to the beginning ↗</Link></section>}
