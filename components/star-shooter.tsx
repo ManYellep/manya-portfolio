@@ -1,11 +1,12 @@
 'use client';
-import {useReducer} from 'react';
+import {useReducer,useEffect} from 'react';
 import {motion,useReducedMotion} from 'framer-motion';
 import {ArrowUpRight} from 'lucide-react';
 import {initialTargetState,targetReducer} from '../lib/interactions.mjs';
 export function StarShooter(){
   const [state,dispatch]=useReducer(targetReducer,initialTargetState);
   const reduce=useReducedMotion();
+  useEffect(()=>{if(state.phase!=='firing')return;const timer=window.setTimeout(()=>dispatch({type:'hit'}),reduce?60:680);return()=>window.clearTimeout(timer)},[state.phase,state.shots,reduce]);
   return <div className="star-shooter-panel"><button className="starfighter-control" onClick={()=>dispatch({type:'fire'})} disabled={state.phase==='firing'} aria-expanded={state.revealed} aria-controls="patent-link" aria-label="Fire starfighter at target to reveal patent">
     <svg viewBox="0 0 360 170" role="img" aria-label="A starfighter fires twin laser bolts at an orbiting target drone">
       <defs><linearGradient id="ship-metal" x2="1" y2="1"><stop stopColor="#d6d0e2"/><stop offset="1" stopColor="#716582"/></linearGradient><radialGradient id="impact"><stop stopColor="#fff4cb"/><stop offset=".4" stopColor="#e0a7fd"/><stop offset="1" stopColor="#b276ff" stopOpacity="0"/></radialGradient></defs>
@@ -23,7 +24,7 @@ export function StarShooter(){
         <path d="M272 57L266 83L272 109L281 103V63ZM323 57L329 83L323 109L314 103V63Z" fill="#655473" stroke="#ba9ad0" strokeWidth="1.5"/>
         <path d="M277 83H319" stroke="#d4bbe4" strokeWidth="3"/><circle cx="298" cy="83" r="16" fill="#292236" stroke="#d3b7e7" strokeWidth="1.5"/><circle cx="298" cy="83" r="7" fill="#86649d"/><path d="M298 62V55M298 111V104M277 83H268M319 83H328" stroke="#a07fba" strokeWidth="1"/>
       </motion.g>
-      {state.phase==='firing'&&<motion.g key={state.shots} initial={{x:0,opacity:1}} animate={{x:190,opacity:[1,1,1,0]}} transition={{duration:reduce?.05:.65,ease:'linear'}} onAnimationComplete={()=>dispatch({type:'hit'})}><path d="M92 77H109M92 89H109" stroke="#e8c5ff" strokeWidth="3" strokeLinecap="round" style={{filter:'drop-shadow(0 0 5px #c67dff)'}}/></motion.g>}
+      {state.phase==='firing'&&<motion.g key={state.shots} initial={{x:0,opacity:1}} animate={{x:[0,190,190],opacity:[1,1,0]}} transition={{duration:reduce?.05:.65,times:[0,.95,1],ease:'linear'}}><path d="M92 77H109M92 89H109" stroke="#e8c5ff" strokeWidth="3" strokeLinecap="round" style={{filter:'drop-shadow(0 0 5px #c67dff)'}}/></motion.g>}
       {state.phase==='hit'&&<motion.g key={`impact-${state.shots}`} initial={{opacity:1,scale:.3}} animate={{opacity:[1,1,0],scale:[.3,1.3,1.8]}} transition={{duration:reduce?.05:.55}} style={{transformOrigin:'298px 83px'}}><circle cx="298" cy="83" r="38" fill="url(#impact)"/><path d="M298 43V123M258 83H338M270 55L326 111M270 111L326 55" stroke="#ecd4ff" strokeWidth="1.5"/></motion.g>}
       <text x="15" y="160" fill="#9b83ad" fontFamily="monospace" fontSize="7" letterSpacing="1.5">FBX-01 / STARFIGHTER</text><text x="267" y="160" fill="#9b83ad" fontFamily="monospace" fontSize="7" letterSpacing="1">TARGET 01</text>
     </svg>
