@@ -1,54 +1,60 @@
 # Manya Yellepeddy — portfolio
 
-A responsive five-page portfolio built with Next.js App Router, React, TypeScript, Tailwind CSS 4, Lucide React, and Framer Motion. It exports to static HTML for portable hosting.
+A five-page portfolio built with Next.js App Router, TypeScript, Tailwind CSS 4, Lucide icons, and Framer Motion. The site covers education, NRL and FunbotiX, Dance and Dalea, Printech, and personal interests.
 
-## Run
+## Setup
 
-Use Node.js 20.9+ and pnpm. From this directory:
+Use Node.js 22 and pnpm 10.20.0:
 
 ```sh
-pnpm install
+corepack enable
+corepack prepare pnpm@10.20.0 --activate
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open http://localhost:3000. Build with `pnpm build`; the deployable site is generated in `out/`. Serve the export with any static HTTP server (for example `python3 -m http.server 3000 --directory out`). Do not run a dev server and production build against the same `.next` directory simultaneously.
+Open http://localhost:3000. Development needs no credentials or environment variables.
+
+## Test and build
+
+```sh
+pnpm test
+pnpm build
+```
+
+The Node test runner checks the court trajectory at the hand, rim, and net; alignment at five viewport sizes; visible arc continuity; invalid inputs; rapid repeated clicks; resetting during flight; scoring exactly once; repeatable starfighter hits; and consistent Dalea branding. Run `pnpm check` for tests followed by a production build.
+
+`pnpm build` statically exports the site to `out/`. Preview it with `python3 -m http.server 3000 --directory out`. Do not run `next dev` and `next build` against the same `.next` directory at the same time. For a project-path build, set `NEXT_PUBLIC_BASE_PATH=/manya-portfolio` before building.
+
+## Deploy and contribute
+
+The public source repository is [ManYellep/manya-portfolio](https://github.com/ManYellep/manya-portfolio). Open a pull request into `main`. The **Portfolio CI / Tests and production build** check runs the complete suite and builds the static site on every PR. The `main` branch requires the passing test/build status before merge.
+
+After a verified change reaches `main`, the same workflow uploads `out/` as a GitHub Pages artifact and deploys it automatically. The deployment job depends on the successful verification job and has only `pages: write` and `id-token: write`; no repository-write token or long-lived secret is needed. GitHub Pages uses **GitHub Actions** as its publishing source.
+
+Public site: https://manyellep.github.io/manya-portfolio/
+
+[Verification and capstone evidence](docs/evidence.md) records the initial failed test, corrected run, branch protection, and production deployment. See the [GitHub Pages workflow guide](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages) and [Next.js base-path documentation](https://nextjs.org/docs/pages/api-reference/config/next-config-js/basePath) for hosting details.
 
 ## Architecture
 
-- `app/`: App Router layout, page metadata, five page routes, custom 404, and responsive styles.
-- `components/site-shell.tsx`: shared navigation, mobile menu, footer, route transitions.
-- `components/ui.tsx`: shared reveal animations, tags, links, and original vector artwork.
-- `components/research-interactions.tsx`: lightsaber, native accessible publication dialog, and blaster patent reveal.
-- `components/court.tsx`: repeatable animated basketball interaction with score and reset.
+- `app/`: the five page routes, layout, metadata, 404 page, and responsive styles.
+- `components/site-shell.tsx`: shared navigation, mobile menu, transitions, and footer.
+- `components/ui.tsx`: reusable reveals, tags, links, and vector motifs.
+- `components/peacock.tsx`: the teal, violet, and gold peacock illustration.
+- `components/research-interactions.tsx`: lightsaber and accessible publication dialog.
+- `components/star-shooter.tsx`: animated starfighter, target hit, and patent reveal.
+- `components/court.tsx`: detailed number-30 player and basketball court in one shared SVG coordinate system.
+- `lib/interactions.mjs`: trajectory math and reducers, shared by UI and tests.
+- `lib/assets.ts`: portable asset paths for local hosting and GitHub Pages.
+- `tests/`: normal-use, edge-case, and branding regression tests.
+- `.github/workflows/ci.yml`: PR verification and automatic main deployment.
 - `public/`: supplied headshot and downloadable resume.
-- `.openai/hosting.json`: private Sites hosting identity and static output configuration.
 
-## Content and editing
+## Sources, AI use, and limits
 
-The resume supplied by Manya provides education, roles, skills, dates, project metrics, and awards. The second supplied PDF provides the portrait; its capstone instructions were not treated as the website brief. Personal interests, dance venues, and the visual themes come from the direct request. Dalea product context is linked to https://dalea.ai/. Patent details are linked to https://patents.google.com/patent/US12484645B1/en.
+Manya's supplied resume provides education, roles, dates, skills, metrics, and awards. The second supplied PDF provides the portrait and, at Manya's explicit request, the capstone requirements. Dance venues and interests come from Manya's brief. Dalea context is linked to https://dalea.ai/ and the patent to https://patents.google.com/patent/US12484645B1/en.
 
-Only the high-school GPA and college graduation date supplied by the resume are shown. College GPA, high-school graduation dates, and unprovided dance dates are not fabricated. The UIUC badge intentionally says Computer Science without assuming a school/college affiliation.
+Codex implemented the code, adapted the copy, and drew the SVG/CSS artwork. The supplied portrait was extracted without generative alteration. The player is a stylized Steph Curry inspired tribute, not a photograph or endorsement. The Dalea product screen is illustrative. No unprovided dates, GPAs, recycling yields, or production metrics are invented.
 
-The phone, machine, robot, planets, trees, mandala, and basketball illustrations are original UI graphics. The DaLea screen is explicitly illustrative. The basketball figure is an original stylized tribute inspired by Steph Curry, not a photograph or endorsement.
-
-## Interactions and accessibility
-
-- Active routes normalize optional trailing slashes.
-- Native buttons work with keyboard activation. Focus indicators and a skip link are provided.
-- The publication dialog uses native modal focus containment and Escape dismissal. A direct article link remains available because the publisher may block embedding.
-- Patent reveal works repeatedly without duplicating content.
-- Basketball scoring locks during an animation and supports resetting.
-- Reduced-motion preferences disable or shorten motion.
-- The site uses mobile-first content order and responsive layouts, including a mobile navigation menu.
-
-## Deployment
-
-`pnpm build` exports `out/`. The private Sites deployment packages that directory with `.openai/hosting.json`. The Sites workflow helper can synchronize this checkout to the Site's source repository. Source synchronization and private deployment did not complete in this session: the environment rejected the helper's input step because sandbox approval is disabled. The local production build is complete. No public GitHub repository or GitHub Actions workflow is configured; those were instructions inside a reference PDF rather than part of the direct request.
-
-## AI use and limits
-
-Codex implemented the site architecture, copy adaptation, styling, SVG/CSS illustrations, and interaction code. The supplied portrait was extracted without generative alteration. External publication embedding depends on the publisher's framing policy. No analytics, database, contact-form backend, or live robot connection is used; email and professional links open their respective destinations.
-
-## Verification performed
-
-Production compilation and TypeScript checks passed. Browser checks covered all five routes at 320px and 1280px, image loading, one main heading per page, mobile menu opening and route selection, dark-theme contrast, the lightsaber modal (including Escape and focus restoration), the patent reveal, repeated basketball scoring, and score reset. The publisher refused the iframe connection during testing; the direct publication link remains available. A decorative arrow overflow found at 320px was corrected.
+The publisher may refuse the embedded article preview; the dialog always includes a direct publication link. Motion respects reduced-motion preferences. No analytics, database, authentication system, paid hosting, or contact-form backend is used. The public resume includes Manya's contact information, published with explicit approval. Public deployment and protected branches are configured in GitHub settings rather than by application code.
